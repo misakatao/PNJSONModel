@@ -31,7 +31,7 @@ TODO: Add long description of the pod here.
   s.ios.deployment_target = '10.0'
 
   s.source_files = 'PNJSONModel/Classes/**/*'
-  
+
   # s.resource_bundles = {
   #   'PNJSONModel' => ['PNJSONModel/Assets/*.png']
   # }

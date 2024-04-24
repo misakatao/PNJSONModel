@@ -1,6 +1,13 @@
 use_frameworks!
-target 'PNJSONModel_Tests' do
+
+platform :ios, '10.0'
+
+target 'PNJSONModel_Example' do
   pod 'PNJSONModel', :path => '../'
-  
-  
+
+  target 'PNJSONModel_Tests' do
+    inherit! :search_paths
+
+    
+  end
 end
