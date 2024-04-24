@@ -22,7 +22,7 @@ pod 'PNJSONModel'
 
 ## Author
 
-misakatao@gmail.com, misakatao@gmail.com
+misakatao
 
 ## License
 
