@@ -1,0 +1,16 @@
+PODS:
+  - PNJSONModel (0.1.0)
+
+DEPENDENCIES:
+  - PNJSONModel (from `../`)
+
+EXTERNAL SOURCES:
+  PNJSONModel:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  PNJSONModel: 46ed637e588b0ba800c635cea946bdbaee04ec7e
+
+PODFILE CHECKSUM: 1424881fbfbaa5412ce70abead6e42a4ee8e46c6
+
+COCOAPODS: 1.15.2

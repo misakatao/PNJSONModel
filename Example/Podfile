@@ -1,0 +1,6 @@
+use_frameworks!
+target 'PNJSONModel_Tests' do
+  pod 'PNJSONModel', :path => '../'
+  
+  
+end
