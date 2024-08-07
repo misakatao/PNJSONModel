@@ -7,12 +7,54 @@
 //
 
 #import "PNAppDelegate.h"
+#import <PNJSONModel/PNJSONModel-umbrella.h>
+#import <objc/runtime.h>
+
+typedef union PNJSONUnion{ char a; int b;} PNJSONUnion;
+
+@interface PNJSONPerson : PNJSONModel
+@property (assign, nonatomic) char charValue; /// `int8_t`
+@property (assign, nonatomic) int intValue; /// `int32_t`
+@property (assign, nonatomic) short shortValue; /// `int16_t`
+@property (assign, nonatomic) long longValue;
+@property (assign, nonatomic) long long longlongValue; /// `int64_t`
+
+@property (assign, nonatomic) unsigned char unsignedCharValue; /// `uint8_t` `UInt8`
+@property (assign, nonatomic) unsigned int unsignedIntValue; /// `uint32_t` `UInt32`
+@property (assign, nonatomic) unsigned short unsignedShortValue; /// `uint16_t` `UInt16`
+@property (assign, nonatomic) unsigned long unsignedLongValue;
+@property (assign, nonatomic) unsigned long long unsignedLonglongValue; /// `uint64_t` `UInt64`
+
+@property (assign, nonatomic) float floatValue;
+@property (assign, nonatomic) double doubleValue;
+@property (assign, nonatomic) long double longDoubleValue;
+@property (assign, nonatomic) BOOL BOOLValue;
+@property (assign, nonatomic) bool boolValue;
+
+@property (strong, nonatomic) NSObject *objectValue;
+@property (strong, nonatomic) Class classValue;
+@property (assign, nonatomic) SEL selValue;
+@property (strong, nonatomic) NSArray *arrayValue;
+@property (assign, nonatomic) CGSize structValue;
+@property (assign, nonatomic) PNJSONUnion unionValue;
+
+@property (copy, nonatomic) void (^blockValue)(void);
+@property (assign, nonatomic) void * pointerValue;
+@property (assign, nonatomic) char * cStringValue;
+@property (assign, nonatomic) CFArrayEqualCallBack functionPointerValue;
+// BitField
+@end
+
+@implementation PNJSONPerson
+
+@end
 
 @implementation PNAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    NSLog([PNJSONPerson pn_cachedProperties]);
     return YES;
 }
 

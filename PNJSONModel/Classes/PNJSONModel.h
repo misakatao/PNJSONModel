@@ -11,13 +11,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PNJSONModel : NSObject <NSCoding, NSCopying>
 
-- (instancetype)initWithJSONDict:(NSDictionary *)dict;
+- (instancetype)initWithJSONDict:(NSDictionary * _Nullable)dict;
 //插入json字符串
-- (void)injectWithJSON:(NSString *)jsonString;
+- (void)injectWithJSON:(NSString * _Nullable)jsonString;
 //替换模型数据 只能处理字典
-- (void)injectJSONData:(NSDictionary *)jsonData;
+- (void)injectJSONData:(NSDictionary * _Nullable)jsonData;
 //替换模型数据
-- (void)injectDataWithModel:(PNJSONModel *)model;
+- (void)injectDataWithModel:(PNJSONModel * _Nullable)model;
 //不区分大小写
 - (NSDictionary *)jsonDict;
 //区分大小写

@@ -7,6 +7,98 @@
 
 #import "NSObject+PNJSONModel.h"
 
+NSString *const kPNPropertyAttributeKeyTypeEncoding = @"T";
+NSString *const kPNPropertyAttributeKeyBackingIvarName = @"V";
+NSString *const kPNPropertyAttributeKeyReadOnly = @"R";
+NSString *const kPNPropertyAttributeKeyCopy = @"C";
+NSString *const kPNPropertyAttributeKeyRetain = @"&";
+NSString *const kPNPropertyAttributeKeyNonAtomic = @"N";
+NSString *const kPNPropertyAttributeKeyCustomGetter = @"G";
+NSString *const kPNPropertyAttributeKeyCustomSetter = @"S";
+NSString *const kPNPropertyAttributeKeyDynamic = @"D";
+NSString *const kPNPropertyAttributeKeyWeak = @"W";
+NSString *const kPNPropertyAttributeKeyGarbageCollectable = @"P";
+NSString *const kPNPropertyAttributeKeyOldStyleTypeEncoding = @"t";
+
+PNEncodingType PNEncodingGetType(const char *typeEncoding) {
+    char *type = (char *)typeEncoding;
+    if (!type) return PNEncodingTypeUnknown;
+    size_t len = strlen(type);
+    if (len == 0) return PNEncodingTypeUnknown;
+    
+    PNEncodingType qualifier = 0;
+//    bool prefix = true;
+//    while (prefix) {
+//        switch (*type) {
+//            case 'r': {
+//                qualifier |= PNEncodingTypeQualifierConst;
+//                type++;
+//            } break;
+//            case 'n': {
+//                qualifier |= PNEncodingTypeQualifierIn;
+//                type++;
+//            } break;
+//            case 'N': {
+//                qualifier |= PNEncodingTypeQualifierInout;
+//                type++;
+//            } break;
+//            case 'o': {
+//                qualifier |= PNEncodingTypeQualifierOut;
+//                type++;
+//            } break;
+//            case 'O': {
+//                qualifier |= PNEncodingTypeQualifierBycopy;
+//                type++;
+//            } break;
+//            case 'R': {
+//                qualifier |= PNEncodingTypeQualifierByref;
+//                type++;
+//            } break;
+//            case 'V': {
+//                qualifier |= PNEncodingTypeQualifierOneway;
+//                type++;
+//            } break;
+//            default: { prefix = false; } break;
+//        }
+//    }
+
+    len = strlen(type);
+    if (len == 0) return PNEncodingTypeUnknown | qualifier;
+
+    switch (*type) {
+        case 'c': return PNEncodingTypeChar | qualifier;
+        case 'i': return PNEncodingTypeInt | qualifier;
+        case 's': return PNEncodingTypeShort | qualifier;
+        case 'l': return PNEncodingTypeLong | qualifier;
+        case 'q': return PNEncodingTypeLongLong | qualifier;
+        case 'C': return PNEncodingTypeUnsignedChar | qualifier;
+        case 'I': return PNEncodingTypeUnsignedInt | qualifier;
+        case 'S': return PNEncodingTypeUnsignedShort | qualifier;
+        case 'L': return PNEncodingTypeUnsignedLong | qualifier;
+        case 'Q': return PNEncodingTypeUnsignedLongLong | qualifier;
+        case 'f': return PNEncodingTypeFloat | qualifier;
+        case 'd': return PNEncodingTypeDouble | qualifier;
+        case 'B': return PNEncodingTypeBool | qualifier;
+        case 'v': return PNEncodingTypeVoid | qualifier;
+        case 'b': return PNEncodingTypeBitField | qualifier;
+        case 'D': return PNEncodingTypeLongDouble | qualifier;
+        case '#': return PNEncodingTypeClass | qualifier;
+        case ':': return PNEncodingTypeSelector | qualifier;
+        case '*': return PNEncodingTypeCharString | qualifier;
+        case '^': return PNEncodingTypePointer | qualifier;
+        case '[': return PNEncodingTypeArray | qualifier;
+        case '(': return PNEncodingTypeUnion | qualifier;
+        case '{': return PNEncodingTypeStruct | qualifier;
+        case '@': {
+            if (len == 2 && *(type + 1) == '?')
+                return PNEncodingTypeBlock | qualifier;
+            else
+                return PNEncodingTypeObject | qualifier;
+        }
+        default: return PNEncodingTypeUnknown | qualifier;
+    }
+}
+
 @interface PNPropertyType ()
 
 @property (nonatomic, assign) BOOL notManage;
@@ -48,6 +140,34 @@
             @"b" : @(22),
             @"^" : @(23),
             @"?" : @(24),
+            @"D" : @(25),
+            /*
+            @(PNTypeEncodingChar)               : @(1),
+            @(PNTypeEncodingInt)                : @(2),
+            @(PNTypeEncodingShort)              : @(3),
+            @(PNTypeEncodingLong)               : @(4),
+            @(PNTypeEncodingLongLong)           : @(5),
+            @(PNTypeEncodingUnsignedChar)       : @(6),
+            @(PNTypeEncodingUnsignedInt)        : @(7),
+            @(PNTypeEncodingUnsignedShort)      : @(8),
+            @(PNTypeEncodingUnsignedLong)       : @(9),
+            @(PNTypeEncodingUnsignedLongLong)   : @(10),
+            @(PNTypeEncodingCBool)              : @(11),
+            @(PNTypeEncodingFloat)              : @(12),
+            @(PNTypeEncodingDouble)             : @(13),
+            @(PNTypeEncodingVoid)               : @(14),
+            @(PNTypeEncodingCString)            : @(15),
+            @(PNTypeEncodingObjcObject)         : @(16),
+            @(PNTypeEncodingObjcClass)          : @(17),
+            @(PNTypeEncodingSelector)           : @(18),
+            @(PNTypeEncodingArrayBegin)         : @(19),
+            @(PNTypeEncodingStructBegin)        : @(20),
+            @(PNTypeEncodingUnionBegin)         : @(21),
+            @(PNTypeEncodingBitField)           : @(22),
+            @(PNTypeEncodingPointer)            : @(23),
+            @(PNTypeEncodingUnknown)            : @(24),
+            @(PNTypeEncodingLongDouble)         : @(25),
+             */
         };
       });
     return encodedTypesMap;
@@ -177,6 +297,48 @@
                 if ([noManagerArr containsObject:propertyName]) {
                     continue;
                 }
+                /*
+                 PNEncodingType type = 0;
+                 unsigned int attrCount;
+                 objc_property_attribute_t *attrs = property_copyAttributeList(property, &attrCount);
+                 for (unsigned int i = 0; i < attrCount; i++) {
+                     switch (attrs[i].name[0]) {
+                         case 'T': { // Type encoding
+                             if (attrs[i].value) {
+                                 NSString *typeEncoding = [NSString stringWithUTF8String:attrs[i].value];
+                                 type = PNEncodingGetType(attrs[i].value);
+                                 
+                                 if ((type & PNEncodingTypeMask) == PNEncodingTypeObject && typeEncoding.length) {
+                                     NSScanner *scanner = [NSScanner scannerWithString:typeEncoding];
+                                     if (![scanner scanString:@"@\"" intoString:NULL]) continue;
+                                     
+                                     NSString *clsName = nil;
+                                     if ([scanner scanUpToCharactersFromSet: [NSCharacterSet characterSetWithCharactersInString:@"\"<"] intoString:&clsName]) {
+                                         if (clsName.length) objc_getClass(clsName.UTF8String);
+                                     }
+                                     
+                                     NSMutableArray *protocols = nil;
+                                     while ([scanner scanString:@"<" intoString:NULL]) {
+                                         NSString* protocol = nil;
+                                         if ([scanner scanUpToString:@">" intoString: &protocol]) {
+                                             if (protocol.length) {
+                                                 if (!protocols) protocols = [NSMutableArray new];
+                                                 [protocols addObject:protocol];
+                                             }
+                                         }
+                                         [scanner scanString:@">" intoString:NULL];
+                                     }
+                                 }
+                             }
+                         } break;
+                         default: break;
+                     }
+                 }
+                 if (attrs) {
+                     free(attrs);
+                     attrs = NULL;
+                 }
+                 */
                 NSString *propertyAttributes = [NSString stringWithUTF8String:property_getAttributes(property)];
                 PNPropertyType *propertyType = [[PNPropertyType alloc] initWithAttributes:propertyAttributes];
                 if (!propertyType.notManage) {
@@ -205,3 +367,4 @@
 }
 
 @end
+
